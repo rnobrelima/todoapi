@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using todoapi.Models;
 
 namespace TodoApi.Models
 {

@@ -1,4 +1,6 @@
-namespace todoapi.Models
+using System;
+
+namespace TodoApi.Models
 {
     public class TodoItem
     {
@@ -6,5 +8,7 @@ namespace todoapi.Models
         public string Name {get; set; }
         public bool IsComplete {get; set; }
         public string Secret {get; set; }
+
+        public string DateTimeCreated {get; set; }
     }
 }
