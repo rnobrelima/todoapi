@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
@@ -52,8 +51,8 @@ namespace todoapi.Controllers
             if (id != todoItemDTO.id)
             {
                 return BadRequest();
-            }
-
+            }                
+            
             var todoItem = await _context.TodoItems.FindAsync(id);
             if (todoItem == null)
             {
@@ -70,7 +69,7 @@ namespace todoapi.Controllers
             }
             catch (DbUpdateConcurrencyException) when (!TodoItemExists(id))
             {
-                return NotFound();   
+                return NotFound();
             }
 
             return NoContent();
@@ -83,14 +82,23 @@ namespace todoapi.Controllers
         {
             var todoItem = new TodoItem
             {
+                Id = _context.TodoItems.Max(maxid => maxid.Id) + 1,
                 IsComplete = todoItemDTO.IsComplete,
                 Name = todoItemDTO.Name,
-                DateTimeCreated = DateTime.UtcNow.ToString(CultureInfo.CreateSpecificCulture("pt-BR"))
+                DateTimeCreated = DateTime.UtcNow.ToString(CultureInfo.CreateSpecificCulture("pt-BR")),
             };
 
             _context.TodoItems.Add(todoItem);
 
+            try {
+
             await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("Erro ao Gravar Registro: ", ex);
+
+            }
 
             return CreatedAtAction(nameof(GetTodoItem), new {id = todoItem.Id}, ItemToDTO(todoItem));
         }
@@ -116,7 +124,7 @@ namespace todoapi.Controllers
             return _context.TodoItems.Any(e => e.Id == id);
         }
 
-        private static TodoItemDTO ItemToDTO(TodoItem todoItem) => 
+        private static TodoItemDTO ItemToDTO(TodoItem todoItem) =>
         new TodoItemDTO
         {
             id = todoItem.Id,

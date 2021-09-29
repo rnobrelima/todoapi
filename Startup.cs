@@ -30,7 +30,7 @@ namespace todoapi
         {
 
             services.AddControllers();
-            services.AddDbContext<TodoContext>(opt => opt.UseInMemoryDatabase("TodoList"));
+            services.AddDbContext<TodoContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("crud"), options => options.EnableRetryOnFailure()));
             // services.AddSwaggerGen(c =>
             // {
             //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "todoapi", Version = "v1" });
